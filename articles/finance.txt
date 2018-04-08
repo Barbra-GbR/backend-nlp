@@ -1,0 +1,166 @@
+Among the hottest programming languages for finance, you’ll find R and Python, alongside languages such as C++, C# and Java. In this tutorial, you’ll learn how to get started with Python for finance. The tutorial will cover the following:
+
+The basics that you need to get started: for those who are new to finance, you’ll first learn more about the stocks and trading strategies, what time series data is and what you need to set up your workspace.
+An introduction to time series data and some of the most common financial analyses, such as moving windows, volatility calculation, … with the Python package Pandas.
+The development of a simple momentum strategy: you’ll first go through the development process step-by-step and start off by formulating and coding up a simple algorithmic trading strategy.
+Next, you’ll backtest the formulated trading strategy with Pandas, zipline and Quantopian.
+Afterwards, you’ll see how you can do optimizations to your strategy to make it perform better and you’ll eventually evaluate your strategy’s performance and robustness.
+
+Download the Jupyter notebook of this tutorial here.
+
+Getting Started With Python for Finance
+Before you go into trading strategies, it’s a good idea to get the hang of the basics first. This first part of the tutorial will focus on explaining the Python basics that you need to get started. This does not mean, however, that you’ll start completely from zero: you should have at least done DataCamp’s free Intro to Python for Data Science course, in which you learned how to work with Python lists, packages and NumPy. Additionally, it is desired to already know the basics of Pandas, the well-known Python data manipulation package, but this is no requirement. If you do want to already get into Pandas before starting this tutorial, consider taking DataCamp’s Pandas Foundations course.
+
+When a company wants to grow and undertake new projects or expand, it can issue stocks to raise capital. A stock represents a share in the ownership of a company and is issued in return for money. Stocks are bought and sold: buyers and sellers trade existing, previously issued shares. The price at which stocks are sold can move independent of the company’s success: the prices instead reflect supply and demand. This means that, whenever a stock is considered as ‘desirable’, due to a success, popularity, … the stock price will go up.
+
+Note that stocks are not exactly the same as bonds, which is when companies raise money through borrowing, either as a loan from a bank or by issuing debt.
+
+As you just read, buying and selling or trading is essential when you’re talking about stocks, but certainly not limited to it: trading is the act of buying or selling an asset, which could be financial security, like stock, a bond or a tangible product, such as gold or oil.
+
+Stock trading is then the process of the cash that is paid for the stocks is converted into a share in the ownership of a company, which can be converted back to cash by selling, and this all hopefully with a profit. Now, to achieve a profitable return, you either go long or short in markets: you either buy shares thinking that the stock price will go up to sell at a higher price in the future, or you sell your stock, expecting that you can buy it back at a lower price and realize a profit. When you follow a fixed plan to go long or short in markets, you have a trading strategy.
+
+Developing a trading strategy is something that goes through a couple of phases, just like when you, for example, build machine learning models: you formulate a strategy and specify it in a form that you can test on your computer, you do some preliminary testing or backtesting, you optimize your strategy and lastly, you evaluate the performance and robustness of your strategy.
+
+Trading strategies are usually verified by backtesting: you reconstruct, with historical data, trades that would have occurred in the past using the rules that are defined with the strategy that you have developed. This way, you can get an idea of the effectiveness of your strategy and you can use it as a starting point to optimize and improve your strategy before applying it to real markets. Of course, this all relies heavily on the underlying theory or belief that any strategy that has worked out well in the past will likely also work out well in the future, and, that any strategy that has performed poorly in the past will likely also do badly in the future.
+
+A time series is a sequence of numerical data points taken at successive equally spaced points in time. In investing, a time series tracks the movement of the chosen data points, such as the stock price, over a specified period of time with data points recorded at regular intervals. If you’re still in doubt about what this would exactly look like, take a look at the following example:
+
+
+You see that the dates are placed on the x-axis, while the price is featured on the y-axis. The “successive equally spaced points in time” in this case means that the days that are featured on the x-axis are 14 days apart: note the difference between 3/7/2005 and the next point, 3/31/2005, and 4/5/2005 and 4/19/2005.
+
+However, what you’ll often see when you’re working with stock data is not just two columns, that contain period and price observations, but most of the times, you’ll have five columns that contain observations of the period and the opening, high, low and closing prices of that period. This means that, if your period is set at a daily level, the observations for that day will give you an idea of the opening and closing price for that day and the extreme high and low price movement for a particular stock during that day.
+
+For now, you have a basic idea of the basic concepts that you need to know to go through this tutorial. These concepts will come back soon enough and you’ll learn more about them later on in this tutorial.
+
+Getting your workspace ready to go is an easy job: you basically just make sure you have Python and an Integrated Development Environment (IDE) running on your system. However, there are some ways in which you can get started that are maybe a little easier when you’re just starting out.
+
+Take for instance Anaconda, a high performance distribution of Python and R and includes over 100 of the most popular Python, R and Scala packages for data science. Additionally, installing Anaconda will give you access to over 720 packages that can easily be installed with conda, our renowned package, dependency and environment manager, that is included in Anaconda. And, besides all that, you’ll get the Jupyter Notebook and Spyder IDE with it.
+
+That sounds like a good deal, right?
+
+You can install Anaconda from here and don’t forget to check out how to set up your Jupyter Notebook in DataCamp’s Jupyter Notebook Tutorial: The Definitive Guide.
+
+Of course, Anaconda is not your only option: you can also check out the Canopy Python distribution (which doesn’t come free), or try out the Quant Platform.
+
+The latter offers you a couple additional advantages over using, for example, Jupyter or the Spyder IDE, since it provides you everything you need specifically to do financial analytics in your browser! With the Quant Platform, you’ll gain access to GUI-based Financial Engineering, interactive and Python-based financial analytics and your own Python-based analytics library. What’s more, you’ll also have access to a forum where you can discuss solutions or questions with peers!
+
+
+When you’re using Python for finance, you’ll often find yourself using the data manipulation package, Pandas. But also other packages such as NumPy, SciPy, Matplotlib,… will pass by once you start digging deeper.
+
+For now, let’s just focus on Pandas and using it to analyze time series data. This section will explain how you can import data, explore and manipulate it with Pandas. On top of all of that, you’ll learn how you can perform common financial analyses on the data that you imported.
+
+The pandas-datareader package allows for reading in data from sources such as Google, Yahoo! Finance, World Bank,… If you want to have an updated list of the data sources that are made available with this function, go to the documentation. For this tutorial, you will use the package to read in data from Yahoo! Finance.
+
+import pandas_datareader 
+as pdr import datetime 
+aapl = pdr.get_data_yahoo('AAPL', start=datetime.datetime(2006, 10, 1), end=datetime.datetime(2012, 1, 1))
+Note that the Yahoo API endpoint has recently changed and that, if you want to already start working with the library on your own, you’ll need to install a temporary fix until the patch has been merged into the master brach to start pulling in data from Yahoo! Finance with pandas-datareader. Make sure to read up on the issue here before you start on your own!
+
+No worries, though, for this tutorial, the data has been loaded in for you so that you don’t face any issues while learning about finance in Python with Pandas.
+
+It’s wise to consider though that, even though pandas-datareader offers a lot of options to pull in data into Python, it isn’t the only package that you can use to pull in financial data: you can also make use of libraries such as Quandl, for example, to get data from Google Finance:
+
+import quandl 
+aapl = quandl.get("WIKI/AAPL", start_date="2006-10-01", end_date="2012-01-01")
+For more information on how you can use Quandl to get financial data directly into Python, go to this page.
+
+Lastly, if you’ve already been working in finance for a while, you’ll probably know that you most often use Excel also to manipulate your data. In such cases, you should know that you can integrate Python with Excel.
+
+Check out DataCamp’s Python Excel Tutorial: The Definitive Guide for more information.
+
+The first thing that you want to do when you finally have the data in your workspace is getting your hands dirty. However, now that you’re working with time series data, this might not seem as straightforward, since your index now contains DateTime values.
+
+No worries, though! Let’s start step-by-step and explore the data first with some functions that you’ll might already know if you have some prior programming experience with R or if you’ve already worked with Pandas.
+
+Either way, you’ll see it’s very easy!
+
+As you saw in the code chunk above, you have used pandas_datareader to import data into your workspace. The resulting object aapl is a DataFrame, which is a 2-dimensional labeled data structure with columns of potentially different types. Now, one of the first things that you probably do when you have a regular DataFrame on your hands, is running the head() and tail() functions to take a peek at the first and the last rows of your DataFrame. Luckily, this doesn’t change when you’re working with time series data!
+
+Tip: also make sure to use the describe() function to get some useful summary statistics about your data.
+
+Find the accompanying exercise here.
+
+As you have seen in the introduction, this data clearly contains the four columns with the opening and closing price per day and the extreme high and low price movements for the Apple stock for each day. Additionally, you also get two extra columns: Volume and Adj Close.
+
+The former column is used to register the number of shares that got traded during a single day. The latter, on the other hand, is the adjusted closing price: it’s the closing price of the day that has been slightly adjusted to include any actions that occurred at any time before the next day’s open. You can use this column to examine historical returns or when you’re performing a detailed analysis on historical returns.
+
+Note how the index or row labels contain dates, and how your columns or column labels contain numerical values.
+
+Tip: if you now would like to save this data to a csv file with the to_csv() function from pandas and that you can use the read_csv() function to read the data back into Python. This is extremely handy in cases where, for example, the Yahoo API endpoint has changed and you don’t have access to your data any longer :)
+
+import pandas as pd 
+aapl.to_csv('data/aapl_ohlc.csv') 
+df = pd.read_csv('data/aapl_ohlc.csv', header=0, index_col='Date', parse_dates=True)
+Now that you have briefly inspected the first lines of your data and have taken a look at some summary statistics, it’s time to go a little bit deeper.
+
+One way to do this is by inspecting the index and the columns and by selecting, for example, the last ten rows of a certain column. The latter is called subsetting because you take a small subset of your data. The result of the subsetting is a Series, which is a one-dimensional labeled array that is capable of holding any type.
+
+Remember that the DataFrame structure was a two-dimensional labeled array with columns that potentially hold different types of data.
+
+Check all of this out in the exercise below. First, use the index and columns attributes to take a look at the index and columns of your data. Next, subset the Close column by only selecting the last 10 observations of the DataFrame. Make use of the square brackets [] to isolate the last ten values. You might already know this way of subsetting from other programming languages, such as R. To conclude, assign the latter to a variable ts and then check what type ts is by using the type() function. You can find the exercise here.
+
+The square brackets can be nice to subset your data, but they are maybe not the most idiomatic way to do things with Pandas. That’s why you should also take a look at the loc() and iloc() functions: you use the former for label-based indexing and the latter for positional indexing.
+
+In practice, this means that you can pass the label of the row labels, such as 2007 and 2006-11-01, to the loc() function, while you pass integers such as 22 and 43 to the iloc() function.
+
+Complete the exercise in the original article to understand how both loc() and iloc() work.
+
+Tip: if you look closely at the results of the subsetting, you’ll notice that there are certain days missing in the data; If you look more closely at the pattern, you’ll see that it’s usually two or three days that are missing; These days are usually weekend days or public holidays and aren’t part of your data. This is nothing to worry about: it’s completely normal and you don’t have to fill in these missing days.
+
+Besides indexing, you might also want to explore some other techniques to get to know your data a little bit better. You never know what else will show up. Let’s try to sample some 20 rows from the data set and then let’s resample the data so that aapl is now at the monthly level instead of daily. You can make use of the sample() and resample() functions to do this.
+
+Very straightforward, isn’t it?
+
+The resample() function is often used because it provides elaborate control and more flexibility on the frequency conversion of your times series: besides specifying new time intervals yourself and specifying how you want to handle missing data, you also have the option to indicate how you want to resample your data, as you can see in the code example above. This stands in clear contract to the asfreq() method, where you only have the first two options.
+
+Tip: try this out for yourself in the IPython console of the above DataCamp Light chunk. Pass in aapl.asfreq("M", method="bfill") to see what happens!
+
+Lastly, before you take your data exploration to the next level and start with visualizing your data and performing some common financial analyses on your data, you might already start to calculate the differences between the opening and closing prices per day. You can easily perform this arithmetic operation with the help of Pandas; Just substract the values in the Open column of your aapl data from the values of the Close column of that same data. Or, in other words, subtract aapl.Close from aapl.Open. You storethe result in a new column of the aapl DataFrame called diff and then you delete it again with the help of del.
+
+Tip: make sure to comment out the last line of code so that the new column of your aapl DataFrame doesn’t get removed and you can check the results of your arithmetic operation!
+
+Of course, knowing the gains in absolute terms might already help you to get an idea of whether you’re making a good investment, but as a quant, you might be more interested in a more relative means of measuring your stock’s value, like how much the value of a certain stock has gone up or gone down. A way to do this is by calculating the daily percentage change.
+
+This is good to know for now, but don’t worry about it just yet; You’ll go deeper into this in a bit!
+
+This section introduced you to some ways to first explore your data before you start performing some prior analyses. However, you can still go a lot further in this; Consider taking our Python Exploratory Data Analysis if you want to know more.
+
+Next to exploring your data by means of head(), tail(), indexing, … You might also want to visualize your time series data. Thanks to Pandas’ plotting integration with Matplotlib, this task becomes easy; Just use the plot() function and pass the relevant arguments to it. Additionally, you can also add the grid argument to indicate that the plot should also have a grid in the background.
+
+If you run the code in the original article, you’ll come to the following plot:
+
+
+If you want to know more about Matplotlib and how to get started with it, check out DataCamp’s Intermediate Python for Data Science course.
+
+Common Financial Analysis
+Now that you have an idea of your data, what time series data is about and how you can use pandas to quickly explore your data, it’s time to dive deeper into some of the common financial analyses that you can do so that you can actually start working towards developing a trading strategy.
+
+In the rest of this section, you’ll learn more about the returns, moving windows, volatility calculation and Ordinary Least-Squares Regression (OLS).
+
+You can read more and practice these common financial analyses in the original article.
+
+Creating A Trading Strategy
+Now that you have done some primary analyses to your data, it’s time to formulate your first trading strategy; But before you go into all of this, why not first get to know some of the most common trading strategies? After a short introduction, you’ll undoubtedly move on more easily your trading strategy.
+
+From the introduction, you’ll still remember that a trading strategy is a fixed plan to go long or short in markets, but much more information you didn’t really get yet; In general, there are two common trading strategies: the momentum strategy and the reversion strategy.
+
+Firstly, the momentum strategy is also called divergence or trend trading. When you follow this strategy, you do so because you believe the movement of a quantity will continue in its current direction. Stated differently, you believe that stocks have momentum, or upward or downward trends, that you can detect and exploit.
+
+Some examples of this strategy are the moving average crossover, the dual moving average crossover and turtle trading:
+
+The moving average crossover is when the price of an asset moves from one side of a moving average to the other. This crossover represents a change in momentum and can be used as a point of making the decision to enter or exit the market. You’ll see an example of this strategy, which is the “hello world” of quantitative trading later on in this tutorial.
+The dual moving average crossover occurs when a short-term average crosses a long-term average. This signal is used to identify that momentum is shifting in the direction of the short-term average. A buy signal is generated when the short-term average crosses the long-term average and rises above it, while a sell signal is triggered by a short-term average crossing long-term average and falling below it.
+Turtle trading is a well-known trend following strategy that was originally taught by Richard Dennis. The basic strategy is to buy futures on a 20-day high and sell on a 20-day low.
+Secondly, the reversion strategy, which is also known as convergence or cycle trading. This strategy departs from the belief that the movement of a quantity will eventually reverse. This might seem a little bit abstract, but will not be so any more when you take the example. Take a look at the mean reversion strategy, where you actually believe that stocks return to their mean and that you can exploit when it deviates from that mean.
+
+That already sounds a whole lot more practical, right?
+
+Another example of this strategy, besides the mean reversion strategy, is the pairs trading mean-reversion, which is similar to the mean reversion strategy. Whereas the mean reversion strategy basically stated that stocks return to their mean, the pairs trading strategy extends this and states that if two stocks can be identified that have a relatively high correlation, the change in the difference in price between the two stocks can be used to signal trading events if one of the two moves out of correlation with the other. That means that if the correlation between two stocks has decreased, the stock with the higher price can be considered to be in a short position. It should be sold because the higher-priced stock will return to the mean. The lower-priced stock, on the other hand, will be in a long position becaue the price will rise as the correlation will return to normal.
+
+Besides these two most frequent strategies, there are also other ones that you might come across once in a while, such as the forecasting strategy, which attempts to predict the direction or value of stock, in this case, in subsequent future time periods based on certain historical factors. There’s also the High Frequency Trading (HFT) strategy, which exploits the sub-millisecond market microstructure.
+
+That’s all music for the future for now; Let’s focus on developing your first trading strategy for now!
+
+As you read above, you’ll start with the “hello world” of quantitative trading: the moving average crossover. The strategy that you’ll be developing is simple: you create two separate Simple Moving Averages (SMA) of a time series with differing lookback periods, let’s say, 40 days and 100 days. If the short moving average exceeds the long moving average then you go long, if the long moving average exceeds the short moving average then you exit.
+
+Remember that when you go long, you think that the stock price will go up and will sell at a higher price in the future (= buy signal); When you go short, you sell your stock, expecting that you can buy it back at a lower price and realize a profit (= sell signal).
